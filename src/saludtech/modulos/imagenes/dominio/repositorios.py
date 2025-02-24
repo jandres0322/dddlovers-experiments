@@ -1,15 +1,21 @@
-from abc import ABC, abstractmethod
-from .entidades import ImagenMedica
+from uuid import UUID
+from typing import Optional, List
+from seedwork.dominio.repositorios import Repositorio
+from saludtech.modulos.imagenes.dominio.entidades import ImagenMedica
 
-class RepositorioImagenes(ABC):
-    @abstractmethod
-    def obtener_por_id(self, id_imagen: str) -> ImagenMedica:
-        pass
+class RepositorioImagenes(Repositorio):
 
-    @abstractmethod
-    def guardar(self, imagen: ImagenMedica) -> None:
-        pass
+    def obtener_por_id(self, id: UUID) -> Optional[ImagenMedica]:
+        raise NotImplementedError
 
-    @abstractmethod
-    def listar_procesadas(self) -> list[ImagenMedica]:
-        pass
+    def obtener_todos(self) -> List[ImagenMedica]:
+        raise NotImplementedError
+
+    def agregar(self, entity: ImagenMedica):
+        raise NotImplementedError
+
+    def actualizar(self, entity: ImagenMedica):
+        raise NotImplementedError
+
+    def eliminar(self, entity_id: UUID):
+        raise NotImplementedError
