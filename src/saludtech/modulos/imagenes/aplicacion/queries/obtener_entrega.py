@@ -1,4 +1,4 @@
-from seedwork.aplicacion.queries import Query, QueryResultado, QueryHandler
+from saludtech.seedwork.aplicacion.queries import Query, QueryResultado, QueryHandler
 from saludtech.modulos.imagenes.dominio.repositorios import RepositorioEntregaImagen
 from saludtech.modulos.imagenes.aplicacion.dto import EntregaImagenDTO
 from saludtech.modulos.imagenes.aplicacion.mapeadores import MapeadorEntregaImagen
@@ -11,6 +11,7 @@ class QueryObtenerEntrega(Query):
 
 @dataclass
 class ResultadoEntrega(QueryResultado):
+        
     entrega: EntregaImagenDTO
 
 class ManejadorObtenerEntrega(QueryHandler):
@@ -25,4 +26,5 @@ class ManejadorObtenerEntrega(QueryHandler):
             return None
         
         entrega_dto = self.mapeador.externo_a_dto(entrega)
+        print("===== entrega_dto", entrega_dto.__dict__)
         return ResultadoEntrega(entrega=entrega_dto)

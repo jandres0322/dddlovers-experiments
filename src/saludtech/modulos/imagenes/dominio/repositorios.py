@@ -1,6 +1,6 @@
 from uuid import UUID
 from typing import Optional, List
-from seedwork.dominio.repositorios import Repositorio
+from saludtech.seedwork.dominio.repositorios import Repositorio
 from saludtech.modulos.imagenes.dominio.entidades import EntregaImagen, HistorialEntrega
 
 class RepositorioEntregaImagen(Repositorio):

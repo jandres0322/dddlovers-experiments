@@ -8,7 +8,7 @@ class Query(ABC):
 
 @dataclass
 class QueryResultado:
-    resultado: None
+    entrega: None
 
 class QueryHandler(ABC):
     @abstractmethod

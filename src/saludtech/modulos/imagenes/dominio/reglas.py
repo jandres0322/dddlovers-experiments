@@ -1,4 +1,4 @@
-from seedwork.dominio.reglas import ReglaNegocio
+from saludtech.seedwork.dominio.reglas import ReglaNegocio
 import saludtech.modulos.imagenes.dominio.objetos_valor as ov
 
 class ReglaEntregaDisponible(ReglaNegocio):

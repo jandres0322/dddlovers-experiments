@@ -1,15 +1,15 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 import uuid
-from seedwork.dominio.entidades import AgregacionRaiz, Entidad
+from saludtech.seedwork.dominio.entidades import AgregacionRaiz, Entidad
 from saludtech.modulos.imagenes.dominio import objetos_valor as ov
 from saludtech.modulos.imagenes.dominio.eventos import EntregaImagenDisponible, ImagenDescargada
 
 @dataclass
 class EntregaImagen(AgregacionRaiz):
 
-    imagen_id: uuid.UUID
-    usuario_id: uuid.UUID
+    imagen_id: uuid.UUID = field(hash=True, default=None)
+    usuario_id: uuid.UUID = field(hash=True, default=None)
     datos_entrega: ov.DatosEntrega = field(default_factory=lambda: ov.DatosEntrega("", datetime.utcnow(), ov.EstadoEntrega.DISPONIBLE, False))  # Autorización por defecto: False
 
     def validar_entrega(self):
@@ -29,7 +29,7 @@ class EntregaImagen(AgregacionRaiz):
 @dataclass
 class HistorialEntrega(AgregacionRaiz):
 
-    entrega_id: uuid.UUID
+    entrega_id: uuid.UUID = field(hash=True, default=None)
     registros_descarga: list[ov.RegistroDescarga] = field(default_factory=list)
 
     def registrar_descarga(self, usuario_id: uuid.UUID):

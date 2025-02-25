@@ -1,4 +1,4 @@
-from seedwork.aplicacion.comandos import Comando, ComandoHandler
+from saludtech.seedwork.aplicacion.comandos import Comando, ComandoHandler
 from saludtech.modulos.imagenes.dominio.servicios import ServicioEntregaImagen
 from saludtech.modulos.imagenes.aplicacion.dto import EntregaImagenDTO
 from saludtech.modulos.imagenes.aplicacion.mapeadores import MapeadorEntregaImagen

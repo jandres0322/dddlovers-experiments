@@ -1,4 +1,4 @@
-from seedwork.aplicacion.servicios import Servicio
+from saludtech.seedwork.aplicacion.servicios import Servicio
 from saludtech.modulos.imagenes.aplicacion.comandos.marcar_disponible import (
     MarcarDisponible, MarcarDisponibleHandler
 )
