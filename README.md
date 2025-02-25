@@ -1,7 +1,7 @@
 # Diseño de Experimentación del Proyecto SaludTech
 
 - Enlace a archivo: [Diseño de Experimentación](https://uniandes-my.sharepoint.com/:p:/g/personal/ja_parrar12_uniandes_edu_co/ES4LpdAT3lFFvaBFxWkfxREB0XP4O2juqa1nAYxBDdquOA?e=NVX5EZ)
-- Enlace a video: [Explicación de la solución]()
+- Enlace a video: [Explicación de la solución](https://uniandes.sharepoint.com/sites/MISO-GrupoProyectoFinal/_layouts/15/stream.aspx?id=%2Fsites%2FMISO%2DGrupoProyectoFinal%2FDocumentos%20compartidos%2FGeneral%2FRecordings%2FReuni%C3%B3n%20en%20%5FGeneral%5F%2D20250224%5F232838%2DGrabaci%C3%B3n%20de%20la%20reuni%C3%B3n%2Emp4&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0=&ga=1)
 
 # dddlovers-experiments
 
