@@ -1,3 +1,8 @@
+# Diseño de Experimentación del Proyecto SaludTech
+
+- Enlace a archivo: [Diseño de Experimentación](https://uniandes-my.sharepoint.com/:p:/g/personal/ja_parrar12_uniandes_edu_co/ES4LpdAT3lFFvaBFxWkfxREB0XP4O2juqa1nAYxBDdquOA?e=NVX5EZ)
+- Enlace a video: [Explicación de la solución]()
+
 # dddlovers-experiments
 
 Este repositorio contiene experimentos relacionados con Domain-Driven Design (DDD) y su aplicación en proyectos de software. A continuación, se detalla la estructura del proyecto y las instrucciones para su despliegue.
