@@ -1,34 +1,24 @@
 from datetime import datetime
+import uuid
 import saludtech.modulos.imagenes.dominio.objetos_valor as ov
-from saludtech.modulos.imagenes.dominio.entidades import ImagenMedica
+from saludtech.modulos.imagenes.dominio.entidades import EntregaImagen
 from seedwork.dominio.fabricas import Fabrica
-from seedwork.dominio.excepciones import ReglaNegocioExcepcion
 
-class FabricaImagenes(Fabrica):
+class FabricaEntregaImagen(Fabrica):
+    """Fábrica para la creación de entregas de imágenes procesadas."""
 
     @staticmethod
-    def crear_objeto(id: str, nombre_archivo: str, formato: str, fecha_creacion: datetime,
-                     tamano_mb: float, resolucion: str, origen: str, fecha_captura: str, tipo_estudio: str) -> ImagenMedica:
+    def crear_entrega(imagen_id: uuid.UUID, usuario_id: uuid.UUID, url_descarga: str) -> EntregaImagen:
+        """Crea una entrega de imagen lista para su disponibilidad."""
 
-        if formato.lower() not in {f.value for f in ov.FormatosPermitidos}:
-            raise ReglaNegocioExcepcion(f"Formato de imagen '{formato}' no permitido. Formatos válidos: {list(ov.FormatosPermitidos)}")
+        fecha_disponible = datetime.utcnow()
 
-        # Crear objeto de valor MetadatosImagen
-        metadatos = ov.MetadatosImagen(
-            tamano_mb=tamano_mb,
-            resolucion=resolucion,
-            origen=origen,
-            fecha_captura=fecha_captura,
-            tipo_estudio=tipo_estudio
-        )
-
-        # Retornar la entidad creada
-        return ImagenMedica(
-            id=id,
-            nombre_archivo=nombre_archivo,
-            formato=formato,
-            fecha_creacion=fecha_creacion,
-            estado=ov.EstadoImagen.PENDIENTE,
-            metadatos=metadatos,
-            url=""
+        return EntregaImagen(
+            imagen_id=imagen_id,
+            usuario_id=usuario_id,
+            datos_entrega=ov.DatosEntrega(
+                url_descarga=url_descarga,
+                fecha_disponible=fecha_disponible,
+                estado=ov.EstadoEntrega.DISPONIBLE
+            )
         )

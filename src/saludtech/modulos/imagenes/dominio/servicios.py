@@ -1,52 +1,41 @@
-from uuid import UUID
-from datetime import datetime
 from seedwork.dominio.servicios import Servicio
-from saludtech.modulos.imagenes.dominio.entidades import ImagenMedica
-from saludtech.modulos.imagenes.dominio.objetos_valor import EstadoImagen, MetadatosImagen
-from saludtech.modulos.imagenes.dominio.repositorios import RepositorioImagenes
-from saludtech.modulos.imagenes.dominio.reglas import ReglaFormatoImagen, ReglaTamanioImagen, ReglaCambioEstado
+from saludtech.modulos.imagenes.dominio.repositorios import RepositorioEntregaImagen, RepositorioHistorialEntrega
+from saludtech.modulos.imagenes.dominio.entidades import HistorialEntrega
+from saludtech.modulos.imagenes.dominio.objetos_valor import EstadoEntrega, RegistroDescarga
+from saludtech.modulos.imagenes.dominio.reglas import ReglaEntregaDisponible
+from saludtech.modulos.imagenes.dominio.excepciones import ImagenNoDisponible
+from datetime import datetime
+import uuid
 
-class ServicioImagenes(Servicio):
+class ServicioEntregaImagen(Servicio):
 
-    def __init__(self, repositorio: RepositorioImagenes):
-        self.repositorio = repositorio
+    def __init__(self, repositorio_entrega: RepositorioEntregaImagen):
+        self.repositorio_entrega = repositorio_entrega
 
-    def subir_imagen(self, id: str, nombre_archivo: str, formato: str, tamano_mb: float, resolucion: str,
-                     origen: str, fecha_captura: str, tipo_estudio: str) -> ImagenMedica:
+    def marcar_como_disponible(self, id_entrega: uuid.UUID):
 
-        self.validar_reglas([
-            ReglaFormatoImagen(formato),
-            ReglaTamanioImagen(tamano_mb)
-        ])
+        entrega = self.repositorio_entrega.obtener_por_id(id_entrega)
+        if not entrega:
+            raise ImagenNoDisponible(id_entrega)
 
-        metadatos = MetadatosImagen(
-            tamano_mb=tamano_mb,
-            resolucion=resolucion,
-            origen=origen,
-            fecha_captura=fecha_captura,
-            tipo_estudio=tipo_estudio
-        )
+        # Validación de disponibilidad
+        self.validar_regla(ReglaEntregaDisponible(entrega.datos_entrega.estado))
 
-        imagen = ImagenMedica(
-            id=id,
-            nombre_archivo=nombre_archivo,
-            formato=formato,
-            fecha_creacion=datetime.utcnow(),
-            estado=EstadoImagen.PENDIENTE,
-            metadatos=metadatos,
-            url=""
-        )
+        entrega.datos_entrega.estado = EstadoEntrega.DISPONIBLE
+        self.repositorio_entrega.actualizar(entrega)
 
-        self.repositorio.agregar(imagen)
-        return imagen
+class ServicioRegistroDescarga(Servicio):
 
-    def procesar_imagen(self, id: UUID, url_procesada: str):
-        imagen = self.repositorio.obtener_por_id(id)
-        if not imagen:
-            raise ValueError(f"No se encontró la imagen con ID {id}")
+    def __init__(self, repositorio_historial: RepositorioHistorialEntrega):
+        self.repositorio_historial = repositorio_historial
 
-        self.validar_reglas([ReglaCambioEstado(imagen.estado, EstadoImagen.PROCESADA)])
+    def registrar_descarga(self, id_entrega: uuid.UUID, usuario_id: uuid.UUID):
 
-        imagen.marcar_como_procesada(url_procesada)
-        self.repositorio.actualizar(imagen)
-        return imagen
+        historial = self.repositorio_historial.obtener_por_id(id_entrega)
+        if not historial:
+            historial = HistorialEntrega(entrega_id=id_entrega, registros_descarga=[])
+
+        nueva_descarga = RegistroDescarga(usuario_id=usuario_id, fecha_descarga=datetime.utcnow())
+        historial.registros_descarga.append(nueva_descarga)
+
+        self.repositorio_historial.actualizar(historial)
