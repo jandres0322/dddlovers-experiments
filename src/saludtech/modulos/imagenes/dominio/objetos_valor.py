@@ -4,9 +4,9 @@ from datetime import datetime
 
 class EstadoEntrega(Enum):
     """Estados posibles para la entrega de imágenes procesadas."""
-    DISPONIBLE = "disponible"
-    EXPIRADA = "expirada"
-    ERROR = "error"
+    DISPONIBLE = "DISPONIBLE"
+    EXPIRADA = "EXPIRADA"
+    ERROR = "ERROR"
 
 @dataclass(frozen=True)
 class DatosEntrega:

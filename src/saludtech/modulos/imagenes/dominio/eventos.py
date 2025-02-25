@@ -1,21 +1,22 @@
 from dataclasses import dataclass
 from datetime import datetime
-from seedwork.dominio.eventos import EventoDominio
-import objetos_valor as ov
+from saludtech.seedwork.dominio.eventos import EventoDominio
+import saludtech.modulos.imagenes.dominio.objetos_valor as ov
+import uuid
 
 @dataclass
 class EntregaImagenDisponible(EventoDominio):
 
-    id_entrega: str
-    imagen_id: str
-    usuario_id: str
-    url_descarga: str
-    fecha_disponible: datetime
+    id_entrega: uuid.UUID = None
+    imagen_id: uuid.UUID = None
+    usuario_id: uuid.UUID = None
+    url_descarga: str = None
+    fecha_disponible: datetime = None
     estado: ov.EstadoEntrega = ov.EstadoEntrega.DISPONIBLE
 
 @dataclass
 class ImagenDescargada(EventoDominio):
 
-    id_entrega: str
-    usuario_id: str
-    fecha_descarga: datetime
+    id_entrega: uuid.UUID = None
+    usuario_id: uuid.UUID = None
+    fecha_descarga: datetime = None

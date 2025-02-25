@@ -1,4 +1,4 @@
-from seedwork.dominio.excepciones import ExcepcionDominio
+from saludtech.seedwork.dominio.excepciones import ExcepcionDominio
 
 class ImagenNoDisponible(ExcepcionDominio):
 

@@ -1,4 +1,4 @@
-from seedwork.dominio.servicios import Servicio
+from saludtech.seedwork.dominio.servicios import Servicio
 from saludtech.modulos.imagenes.dominio.repositorios import RepositorioEntregaImagen, RepositorioHistorialEntrega
 from saludtech.modulos.imagenes.dominio.entidades import HistorialEntrega
 from saludtech.modulos.imagenes.dominio.objetos_valor import EstadoEntrega, RegistroDescarga

@@ -1,21 +1,22 @@
-from seedwork.aplicacion.dto import Mapeador
+from saludtech.seedwork.aplicacion.dto import Mapeador
 from saludtech.modulos.imagenes.dominio.entidades import EntregaImagen, HistorialEntrega
 from saludtech.modulos.imagenes.aplicacion.dto import EntregaImagenDTO, HistorialEntregaDTO, RegistroDescargaDTO
 
 class MapeadorEntregaImagen(Mapeador):
 
     def externo_a_dto(self, entrega: EntregaImagen) -> EntregaImagenDTO:
+        print("===== datos entrega", entrega.__dict__)
         return EntregaImagenDTO(
             id_entrega=entrega.id,
             imagen_id=entrega.imagen_id,
-            estado=entrega.datos_entrega.estado.value,
-            url_descarga=entrega.datos_entrega.url_descarga
+            estado=entrega.estado.value,
+            url_descarga=entrega.url_descarga
         )
 
     def dto_a_externo(self, dto: EntregaImagenDTO) -> EntregaImagen:
-        raise NotImplementedError("No se admite la conversión de DTO a entidad en este contexto.")
+        return dto.__dict__
 
-class HistorialEntregaHandler(Mapeador):
+class MapeadorHistorialEntrega(Mapeador):
 
     def externo_a_dto(self, historial: HistorialEntrega) -> HistorialEntregaDTO:
         registros_dto = [
@@ -28,4 +29,4 @@ class HistorialEntregaHandler(Mapeador):
         )
 
     def dto_a_externo(self, dto: HistorialEntregaDTO) -> HistorialEntrega:
-        raise NotImplementedError("No se admite la conversión de DTO a entidad en este contexto.")
+        return dto.__dict__

@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 import uuid
 from datetime import datetime
-from seedwork.aplicacion.dto import DTO
-from abc import ABC, abstractmethod
+from saludtech.seedwork.aplicacion.dto import DTO
 
 @dataclass(frozen=True)
 class EntregaImagenDTO(DTO):
