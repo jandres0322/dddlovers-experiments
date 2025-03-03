@@ -1,7 +1,7 @@
 from saludtech.seedwork.aplicacion.queries import Query, QueryResultado, QueryHandler
 from saludtech.modulos.imagenes.dominio.repositorios import RepositorioEntregaImagen
 from saludtech.modulos.imagenes.aplicacion.dto import EntregaImagenDTO
-from saludtech.modulos.imagenes.aplicacion.mapeadores import MapeadorEntregaImagen
+from saludtech.modulos.imagenes.aplicacion.dto import MapeadorEntregaImagen
 import uuid
 from dataclasses import dataclass
 
