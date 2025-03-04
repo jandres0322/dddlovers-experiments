@@ -1,28 +1,147 @@
+
+networks:
+  pulsar:
+    driver: bridge
+  sidecar:
+    driver: bridge
+  app:
+    driver: bridge
 services:
+  # Servicio de Zookeeper para gestionar el estado de Pulsar
+  zookeeper:
+    image: apachepulsar/pulsar:latest
+    profiles: ["pulsar"]
+    container_name: zookeeper
+    restart: on-failure
+    networks:
+      - pulsar
+    volumes:
+      - ./data/zookeeper:/pulsar/data/zookeeper
+    environment:
+      - metadataStoreUrl=zk:zookeeper:2181
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/zookeeper.conf && \
+             bin/generate-zookeeper-config.sh conf/zookeeper.conf && \
+             exec bin/pulsar zookeeper"
+    healthcheck:
+      test: ["CMD", "bin/pulsar-zookeeper-ruok.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
 
-    saludtech:
-        build:
-            context: .
-            dockerfile: saludtech.Dockerfile
-        depends_on:
-            database:
-                condition: service_healthy
-        environment:
-            - PYTHONUNBUFFERED=1
-        ports:
-            - "5000:5000"
+  # Init - Servicio para inicializar la metadata del clúster Pulsar
+  pulsar-init:
+    container_name: pulsar-init
+    hostname: pulsar-init
+    image: apachepulsar/pulsar:latest
+    profiles: ["pulsar"]
+    networks:
+      - pulsar
+    command: bin/pulsar initialize-cluster-metadata --cluster cluster-a --zookeeper zookeeper:2181 --configuration-store zookeeper:2181 --web-service-url http://broker:8080 --broker-service-url pulsar://broker:6650
+    depends_on:
+      zookeeper:
+        condition: service_healthy
 
-    database:
-        image: postgres:16
-        environment:
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres
-            POSTGRES_DB: saludtech
-        ports:
-            - "5432:5432"
-        healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U postgres -d saludtech"]
-            interval: 2s
-            timeout: 5s
-            retries: 5
- 
+  # Start bookie - Servicio de Bookie para almacenamiento persistente
+  bookie:
+    image: apachepulsar/pulsar:latest
+    profiles: ["pulsar"]
+    container_name: bookie
+    restart: on-failure
+    networks:
+      - pulsar
+    environment:
+      - clusterName=cluster-a
+      - zkServers=zookeeper:2181
+      - metadataServiceUri=metadata-store:zk:zookeeper:2181
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+      pulsar-init:
+        condition: service_completed_successfully
+        
+    # Map the local directory to the container to avoid bookie startup failure due to insufficient container disks.
+    volumes:
+      - ./data/bookkeeper:/pulsar/data/bookkeeper
+    command: bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf
+      && exec bin/pulsar bookie"
+
+  # Start broker
+  broker:
+    image: apachepulsar/pulsar:latest
+    profiles: ["pulsar"]
+    container_name: broker
+    hostname: broker
+    restart: on-failure
+    networks:
+      - pulsar
+    environment:
+      - metadataStoreUrl=zk:zookeeper:2181
+      - zookeeperServers=zookeeper:2181
+      - clusterName=cluster-a
+      - managedLedgerDefaultEnsembleSize=1
+      - managedLedgerDefaultWriteQuorum=1
+      - managedLedgerDefaultAckQuorum=1
+      - advertisedAddress=broker
+      - advertisedListeners=external:pulsar://127.0.0.1:6650
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+      bookie:
+        condition: service_started
+    ports:
+      - "6650:6650"
+      - "8080:8080"
+    command: bash -c "bin/apply-config-from-env.py conf/broker.conf
+      &&  exec bin/pulsar broker"
+
+  # Servicios de SaludTech
+  saludtech:
+    build:
+      context: .
+      dockerfile: saludtech.Dockerfile
+    profiles: ["saludtech"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PULSAR_ADDRESS=broker   
+    networks:
+      - pulsar
+      - app
+    ports:
+      - "5000:5000" 
+
+
+  db:
+    image: postgres:16
+    profiles: ["saludtech"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: saludtech
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d saludtech"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app
+
+  # Servicios de Notificación
+  notificacion:
+    build:
+      context: .
+      dockerfile: notificacion.Dockerfile
+    container_name: notificacion
+    hostname: notificacion
+    profiles: ["pulsar", "notificacion"]
+    depends_on:
+      - broker
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - pulsar 
