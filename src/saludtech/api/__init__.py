@@ -26,10 +26,9 @@ def create_app(configuracion={}):
     init_db(app)
 
     from saludtech.config.db import db
-    
+
     importar_modelos_alchemy()
     registrar_handler()
-    
     with app.app_context():
         db.create_all()
 
