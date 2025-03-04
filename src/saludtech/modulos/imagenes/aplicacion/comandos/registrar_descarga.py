@@ -1,7 +1,7 @@
 from saludtech.seedwork.aplicacion.comandos import Comando, ComandoHandler
 from saludtech.modulos.imagenes.dominio.servicios import ServicioRegistroDescarga
 from saludtech.modulos.imagenes.aplicacion.dto import RegistroDescargaDTO
-from saludtech.modulos.imagenes.aplicacion.mapeadores import MapeadorHistorialEntrega
+from saludtech.modulos.imagenes.aplicacion.dto import MapeadorHistorialEntrega
 from dataclasses import dataclass
 
 
