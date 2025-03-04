@@ -1,18 +1,33 @@
-
+from __future__ import annotations
 from dataclasses import dataclass, field
+from datetime import datetime
+from uuid import UUID 
 
-from saludtech.seedwork.dominio.entidades import AgregacionRaiz
+from saludtech.seedwork.dominio.entidades import AgregacionRaiz, Entidad
 
-import saludtech.modulos.standard.dominio.objetos_valor as ov
+from .objetos_valor import EstadoDescarga, FormatoArchivo
+from .eventos import SolicitudDescargaCreada
+
+@dataclass
+class ImagenMedica(Entidad):
+  formato: FormatoArchivo = field(default_factory=FormatoArchivo)
+  ubicacion: str = field(default_factory=str)
 
 @dataclass
 class SolicitudDescarga(AgregacionRaiz):
-  usuario_id: str = field(default_factory=str)
-  formato: ov.FormatoDescarga = field(default_factory=ov.FormatoDescarga)
-  estado: ov.EstadoSolicitud = field(default=ov.EstadoSolicitud.PENDIENTE)
+  id_usuario: UUID = field(hash=True, default=None)
+  estado_descarga: EstadoDescarga = field(default=EstadoDescarga.PENDIENTE)
+  imagenes: list[ImagenMedica] = field(default_factory=list)
   
-  def cambiar_estado(self, nuevo_estado: ov.EstadoSolicitud):
-    self.estado = nuevo_estado
+  def crear_solicitud(self, solicitud: SolicitudDescarga):
+    self.id_usuario = solicitud.id_usuario
+    self.estado_descarga = solicitud.estado_descarga
+    self.imagenes = solicitud.imagenes
+    self.fecha_creacion = datetime.now()
     
-  def es_procesable(self) -> bool:
-    return self.estado == ov.EstadoSolicitud.PENDIENTE
+    self.agregar_evento(SolicitudDescargaCreada(
+      id_solicitud=self.id,
+      id_usuario=self.id_usuario,
+      estado_descarga=self.estado_descarga.name,
+      fecha_creacion=self.fecha_creacion
+    ))

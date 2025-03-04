@@ -4,6 +4,9 @@ from flask_swagger import swagger
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+def registrar_handler():
+    import saludtech.modulos.standard.aplicacion
+
 def importar_modelos_alchemy():
     import saludtech.modulos.imagenes.infraestructura.dto
     import saludtech.modulos.standard.infraestructura.dto
@@ -12,7 +15,7 @@ def create_app(configuracion={}):
     # Init la aplicacion de Flask
     app = Flask(__name__, instance_relative_config=True)
     
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@database/saludtech'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@db:5432/saludtech'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     app.secret_key = '9d58f98f-3ae8-4149-a09f-3a8c2012e32c'
@@ -25,6 +28,7 @@ def create_app(configuracion={}):
     from saludtech.config.db import db
     
     importar_modelos_alchemy()
+    registrar_handler()
     
     with app.app_context():
         db.create_all()

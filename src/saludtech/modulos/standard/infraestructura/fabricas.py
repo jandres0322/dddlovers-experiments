@@ -11,7 +11,8 @@ from saludtech.modulos.standard.infraestructura.repositorios import RepositorioS
 class FabricaRepositorio(Fabrica):
   
   def crear_objeto(self, obj, mapeador = None) -> Repositorio:
-    if obj == RepositorioSolicitudDescarga.__class__:
+    if obj == RepositorioSolicitudDescarga:
+      print('crear_objeto')
       return RepositorioSolicitudDescargaSQLAlchemy()
     else:
-      raise ExcepcionFabrica()
+      raise ExcepcionFabrica('No se puede crear el objeto solicitado')

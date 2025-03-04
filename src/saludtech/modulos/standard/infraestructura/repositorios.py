@@ -1,7 +1,7 @@
 
 from saludtech.config.db import db
 
-from saludtech.modulos.standard.dominio.repositorios import RepositorioSolicitudDescarga
+from saludtech.modulos.standard.dominio.repositorios import RepositorioSolicitudDescarga, RepositorioEventosSolicitudDescarga
 from saludtech.modulos.standard.dominio.entidades import SolicitudDescarga
 from saludtech.modulos.standard.dominio.fabricas import FabricaSolicitudDescarga
 from saludtech.modulos.standard.infraestructura.mapeadores import MapeadorSolicitudDescarga

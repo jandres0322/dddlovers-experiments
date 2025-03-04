@@ -1,13 +1,13 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
-from datetime import datetime
 
-class EstadoSolicitud(Enum):
-  PENDIENTE = "PENDIENTE"
-  PROCESANDO = "PROCESANDO"
-  PROCESADO = "PROCESADO"
-  ERROR = "ERROR"
+from saludtech.seedwork.dominio.objetos_valor import ObjetoValor
 
-@dataclass(frozen=True)
-class FormatoDescarga:
-  valor: str
+class EstadoDescarga(Enum):
+  PENDIENTE = 'PENDIENTE'
+  LISTA = 'LISTA'
+  COMPLETADA = 'COMPLETADA'
+  
+class FormatoArchivo(Enum):
+  DICOM = 'DICOM'
+  JSON = 'JSON'

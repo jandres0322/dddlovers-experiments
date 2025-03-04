@@ -1,27 +1,14 @@
-from datetime import datetime
-
 from saludtech.seedwork.dominio.reglas import ReglaNegocio
 
-from .objetos_valor import FormatoDescarga
+from .objetos_valor import FormatoArchivo
 
-class FormatoDescargaValido(ReglaNegocio):
-  
-  def __init__(self, formato: FormatoDescarga):
-    self.formato = formato
+class ValidarFormatoDescarga(ReglaNegocio):
     
-  def es_valido(self):
-    return self.formato in {"JSON", "DICOM"}
-  
-  def mensaje_error(self):
-    return f"Formato de descarga inválido: {self.formato.formato}"
-  
-class FechaSolicitudValida(ReglaNegocio):
+  formato: str
 
-    def __init__(self, fecha_solicitud: datetime):
-        self.fecha_solicitud = fecha_solicitud
+  def __init__(self, formato, mensaje="El formato de descarga debe ser DICOM o JSON."):
+    super().__init__(mensaje)
+    self.formato = formato
 
-    def es_valido(self):
-        return self.fecha_solicitud <= datetime.now()
-
-    def mensaje_error(self):
-        return "La fecha de solicitud no puede ser en el futuro."
+  def es_valido(self) -> bool:
+    return self.formato in [FormatoArchivo.DICOM.value, FormatoArchivo.JSON.value]
