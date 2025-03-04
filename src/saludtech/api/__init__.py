@@ -8,7 +8,7 @@ def create_app(configuracion={}):
     # Init la aplicacion de Flask
     app = Flask(__name__, instance_relative_config=True)
     
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:(7KH,{k4CdK>DQ1]@35.194.32.155/postgres'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@db/saludtech'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     app.secret_key = '9d58f98f-3ae8-4149-a09f-3a8c2012e32c'
@@ -20,14 +20,17 @@ def create_app(configuracion={}):
 
     from saludtech.config.db import db
     from saludtech.modulos.imagenes.infraestructura.dto import EntregaImagenORM, HistorialEntregaORM
+    from saludtech.modulos.usuarios.infraestructura.dto import UsuarioORM
     with app.app_context():
         db.create_all()
 
      # Importa Blueprints
     from . import imagenes
+    from . import usuarios
 
     # Registro de Blueprints
     app.register_blueprint(imagenes.bp)
+    app.register_blueprint(usuarios.bp)
 
     @app.route("/spec")
     def spec():
