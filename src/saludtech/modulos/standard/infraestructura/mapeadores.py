@@ -1,7 +1,7 @@
 from saludtech.seedwork.dominio.repositorios import Mapeador
 
 from saludtech.modulos.standard.dominio.entidades import SolicitudDescarga
-from saludtech.modulos.standard.infraestructura.dto import SolicitudDescarga as SolicitudDescargaDTO
+from saludtech.modulos.standard.infraestructura.dto import SolicitudDescargaV1 as SolicitudDescargaDTO
 from saludtech.modulos.standard.dominio.eventos import SolicitudDescargaCreada, EventoSolicitud
 from saludtech.seedwork.infraestructura.utils import unix_time_millis
 

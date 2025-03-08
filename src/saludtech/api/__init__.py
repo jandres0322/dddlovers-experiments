@@ -4,12 +4,9 @@ from flask_swagger import swagger
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-def registrar_handler():
-    import saludtech.modulos.standard.aplicacion
 
 def importar_modelos_alchemy():
-    import saludtech.modulos.imagenes.infraestructura.dto
-    import saludtech.modulos.standard.infraestructura.dto
+    import saludtech.modules.gestion_descargas.infraestructura.dto
 
 def create_app(configuracion={}):
     # Init la aplicacion de Flask
@@ -28,15 +25,14 @@ def create_app(configuracion={}):
     from saludtech.config.db import db
 
     importar_modelos_alchemy()
-    registrar_handler()
     with app.app_context():
         db.create_all()
 
      # Importa Blueprints
-    from . import standard
+    from . import gestion_descargas
 
     # Registro de Blueprints
-    app.register_blueprint(standard.bp)
+    app.register_blueprint(gestion_descargas.bp)
 
     @app.route("/spec")
     def spec():
