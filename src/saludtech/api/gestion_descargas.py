@@ -1,4 +1,4 @@
-from flask import request, Response
+from flask import request, Response, session
 
 from saludtech.seedwork.presentacion import api
 from saludtech.seedwork.aplicacion.comandos import ejecutar_commando
@@ -11,6 +11,8 @@ bp = api.crear_blueprint('gestion-descargas', '/gestion-descargas')
 @bp.route('/solicitar', methods=('POST',))
 def solicitar_descarga():
     try:
+        
+        session['uow_metodo'] = 'pulsar'
         
         solicitud_dict = request.json
         

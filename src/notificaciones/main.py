@@ -37,7 +37,12 @@ class EventoSolicitudCreada(EventoIntegracion):
 HOSTNAME = os.getenv('PULSAR_ADDRESS', default="localhost")
 
 client = pulsar.Client('pulsar://broker:6650')
-consumer = client.subscribe('eventos-solicitud', consumer_type=_pulsar.ConsumerType.Shared, subscription_name='sub-notificacion-eventos-reservas', schema=AvroSchema(EventoSolicitudCreada))
+
+consumer = client.subscribe(
+    'eventos-solicitud-descarga-creada',  # 👈 Tópico corregido
+    subscription_name='sub-notificacion-eventos-reservas',
+    schema=AvroSchema(EventoSolicitudCreada)
+)
 
 while True:
     msg = consumer.receive()

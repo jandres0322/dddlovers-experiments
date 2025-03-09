@@ -7,6 +7,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 def importar_modelos_alchemy():
     import saludtech.modules.gestion_descargas.infraestructura.dto
+    
+def registrar_handlers():
+    import saludtech.modules.gestion_descargas.aplicacion
 
 def create_app(configuracion={}):
     # Init la aplicacion de Flask
@@ -25,6 +28,8 @@ def create_app(configuracion={}):
     from saludtech.config.db import db
 
     importar_modelos_alchemy()
+    registrar_handlers()
+    
     with app.app_context():
         db.create_all()
 

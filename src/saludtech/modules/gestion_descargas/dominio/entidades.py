@@ -2,6 +2,7 @@ from __future__ import annotations
 from saludtech.seedwork.dominio.entidades import AgregacionRaiz
 from dataclasses import dataclass, field
 from .objetos_valor import EstadoDescarga, FormatoDescarga
+from .eventos import EventoSolicitudDescargaCreada
 from datetime import datetime
 
 @dataclass
@@ -17,6 +18,14 @@ class SolicitudDescarga(AgregacionRaiz):
         self.formato = solicitud.formato
         self.estado = solicitud.estado
         self.fecha_creacion = datetime.now()
+        
+        self.agregar_evento(
+            EventoSolicitudDescargaCreada(
+                estado=self.estado,
+                id_usuario=self.id_usuario,
+                formato=self.formato,
+            )
+        )
 
     def cambiar_estado(self, estado: EstadoDescarga):
         self.estado = estado

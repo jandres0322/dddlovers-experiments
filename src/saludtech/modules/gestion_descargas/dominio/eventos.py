@@ -7,8 +7,8 @@ class EventoSolicitud(EventoDominio):
     ...
     
 @dataclass
-class SolicitudDescargaCreada(EventoSolicitud):
-    id_usuario: uuid.UUID
-    imagenes: list[str]
-    formato: str
-    estado: str
+class EventoSolicitudDescargaCreada(EventoSolicitud):
+    id: uuid.UUID = None
+    id_usuario: uuid.UUID = None
+    formato: str = None
+    estado: str = None
