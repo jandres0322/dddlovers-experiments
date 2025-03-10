@@ -1,7 +1,8 @@
 from __future__ import annotations
 from saludtech.seedwork.dominio.eventos import EventoDominio
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import uuid
+from datetime import datetime
 
 class EventoSolicitud(EventoDominio):
     ...
@@ -10,5 +11,5 @@ class EventoSolicitud(EventoDominio):
 class EventoSolicitudDescargaCreada(EventoSolicitud):
     id: uuid.UUID = None
     id_usuario: uuid.UUID = None
-    formato: str = None
-    estado: str = None
+    id_solicitud: uuid.UUID = None
+    id_imagenes: str = None

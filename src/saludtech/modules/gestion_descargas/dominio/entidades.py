@@ -21,9 +21,10 @@ class SolicitudDescarga(AgregacionRaiz):
         
         self.agregar_evento(
             EventoSolicitudDescargaCreada(
-                estado=self.estado,
+                id=self.id,
                 id_usuario=self.id_usuario,
-                formato=self.formato,
+                id_solicitud=solicitud.id,
+                id_imagenes=solicitud.imagenes
             )
         )
 

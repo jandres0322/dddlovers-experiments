@@ -8,7 +8,6 @@ import uuid
 class SolicitudCreadaPayload(Record):
     id_solicitud = String()
     id_usuario = String()
-    fecha_creacion = Long()
     
 class EventoSolicitudCreada(EventoIntegracion):
     id = String(default=str(uuid.uuid4()))

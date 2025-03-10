@@ -10,6 +10,13 @@ def importar_modelos_alchemy():
     
 def registrar_handlers():
     import saludtech.modules.gestion_descargas.aplicacion
+    
+def comenzar_consumidores(app):
+    print('comenzar_consumidores')
+    import saludtech.modules.procesamiento_imagenes.infraestructura.consumidores as procesamiento_imagenes
+    
+    import threading
+    threading.Thread(target=procesamiento_imagenes.subscribirse_a_eventos, args=(app,)).start()
 
 def create_app(configuracion={}):
     # Init la aplicacion de Flask
@@ -32,6 +39,7 @@ def create_app(configuracion={}):
     
     with app.app_context():
         db.create_all()
+        comenzar_consumidores(app)
 
      # Importa Blueprints
     from . import gestion_descargas

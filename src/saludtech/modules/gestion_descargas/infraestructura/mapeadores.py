@@ -35,12 +35,11 @@ class MapeadorEventoSolicitudDesarga(Mapeador):
             payload = SolicitudCreadaPayload(
                 id_solicitud=str(evento.id),
                 id_usuario=str(evento.id_usuario),
-                estado=evento.estado.value,
+                id_imagenes=str(evento.id_imagenes)
             )
             
             evento_integracion = EventoSolicitudCreada(id=str(evento.id))
             evento_integracion.id = str(evento.id)
-            # evento_integracion.time = int(unix_time_millis(evento.fecha_creacion))
             evento_integracion.specversion = str(version)
             evento_integracion.type = 'SolicitudDescargaCreada'
             evento_integracion.datacontenttype = 'AVRO'
