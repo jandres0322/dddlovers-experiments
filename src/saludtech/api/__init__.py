@@ -4,11 +4,29 @@ from flask_swagger import swagger
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+
+def importar_modelos_alchemy():
+    import saludtech.modules.gestion_descargas.infraestructura.dto
+    import saludtech.modules.procesamiento_imagenes.infraestructura.dto
+    
+def registrar_handlers():
+    import saludtech.modules.gestion_descargas.aplicacion
+    
+def comenzar_consumidores(app):
+    import saludtech.modules.procesamiento_imagenes.infraestructura.consumidores as procesamiento_imagenes
+
+    def iniciar_consumidor():
+        with app.app_context():
+            procesamiento_imagenes.subscribirse_a_eventos()
+    
+    import threading
+    threading.Thread(target=iniciar_consumidor, args=(app,)).start()
+
 def create_app(configuracion={}):
     # Init la aplicacion de Flask
     app = Flask(__name__, instance_relative_config=True)
     
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:(7KH,{k4CdK>DQ1]@35.194.32.155/postgres'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@db:5432/saludtech'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     app.secret_key = '9d58f98f-3ae8-4149-a09f-3a8c2012e32c'
@@ -18,16 +36,16 @@ def create_app(configuracion={}):
     from saludtech.config.db import init_db
     init_db(app)
 
-    from saludtech.config.db import db
-    from saludtech.modulos.imagenes.infraestructura.dto import EntregaImagenORM, HistorialEntregaORM
+    
     with app.app_context():
         db.create_all()
+        comenzar_consumidores(app)
 
      # Importa Blueprints
-    from . import imagenes
+    from . import gestion_descargas
 
     # Registro de Blueprints
-    app.register_blueprint(imagenes.bp)
+    app.register_blueprint(gestion_descargas.bp)
 
     @app.route("/spec")
     def spec():
