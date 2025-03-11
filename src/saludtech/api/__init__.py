@@ -7,16 +7,20 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 def importar_modelos_alchemy():
     import saludtech.modules.gestion_descargas.infraestructura.dto
+    import saludtech.modules.procesamiento_imagenes.infraestructura.dto
     
 def registrar_handlers():
     import saludtech.modules.gestion_descargas.aplicacion
     
 def comenzar_consumidores(app):
-    print('comenzar_consumidores')
     import saludtech.modules.procesamiento_imagenes.infraestructura.consumidores as procesamiento_imagenes
+
+    def iniciar_consumidor():
+        with app.app_context():
+            procesamiento_imagenes.subscribirse_a_eventos()
     
     import threading
-    threading.Thread(target=procesamiento_imagenes.subscribirse_a_eventos, args=(app,)).start()
+    threading.Thread(target=iniciar_consumidor, args=(app,)).start()
 
 def create_app(configuracion={}):
     # Init la aplicacion de Flask
@@ -32,10 +36,6 @@ def create_app(configuracion={}):
     from saludtech.config.db import init_db
     init_db(app)
 
-    from saludtech.config.db import db
-
-    importar_modelos_alchemy()
-    registrar_handlers()
     
     with app.app_context():
         db.create_all()

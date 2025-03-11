@@ -12,7 +12,6 @@ bp = api.crear_blueprint('gestion-descargas', '/gestion-descargas')
 def solicitar_descarga():
     try:
         
-        session['uow_metodo'] = 'pulsar'
         
         solicitud_dict = request.json
         

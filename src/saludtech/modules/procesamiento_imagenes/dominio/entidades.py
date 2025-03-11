@@ -1,7 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from saludtech.seedwork.dominio.entidades import AgregacionRaiz, Entidad
-from .objeto_valor import FormatoImagen
 import uuid
 
 @dataclass
@@ -13,7 +12,7 @@ class ImagenProcesada(Entidad):
 
 @dataclass
 class PaqueteDescarga(AgregacionRaiz):
-    id_solicitud: uuid.UUID = field(hash=True)
+    id_solicitud: str = field(hash=True, default_factory=str)
     ruta_comprimido: str = field(default_factory=str)
     
     def generar_comprimido(self, imagenes: list[ImagenProcesada]):

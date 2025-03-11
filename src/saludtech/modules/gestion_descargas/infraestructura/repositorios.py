@@ -10,6 +10,7 @@ class RepositorioSolicitudSQLAlchemy(RepositorioSolicitudDescarga):
         self.fabrica_reserva: FabricaSolicitudDescarga = FabricaSolicitudDescarga()
         
     def agregar(self, entidad: SolicitudDescarga):
+        print('guardando solicitud de descarga')
         solicitud_dto = self.fabrica_reserva.crear_objeto(entidad, MapeadorSolicitudDescarga())
         db.session.add(solicitud_dto)
         

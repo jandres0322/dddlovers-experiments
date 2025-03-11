@@ -5,6 +5,7 @@ from pulsar.schema import AvroSchema
 from saludtech.modules.procesamiento_imagenes.infraestructura.schemas.v1.eventos import EventoSolicitudCreada
 from saludtech.seedwork.aplicacion.queries import ejecutar_query
 from saludtech.modules.procesamiento_imagenes.aplicacion.mapeadores import MapeadorObtenerImagenesDTOJson
+from saludtech.modules.procesamiento_imagenes.aplicacion.queries.obtener_imagenes import ObtenerImagenes
 
 def subscribirse_a_eventos(app=None):
     print('subscribirse_a_eventos')
@@ -25,11 +26,14 @@ def subscribirse_a_eventos(app=None):
             
             map_obtener_imagenes = MapeadorObtenerImagenesDTOJson()
             obtener_imagen_dto = map_obtener_imagenes.externo_a_dto(datos)
+                        
             
-            print('obtener_imagen_dto', obtener_imagen_dto.__dict__)
-            
-            
-            ejecutar_query()
+            query_resultado = ejecutar_query(ObtenerImagenes(
+                id_solicitud = obtener_imagen_dto.id_solicitud,
+                id_imagenes= obtener_imagen_dto.id_imagenes
+            ))
+
+            return map_obtener_imagenes.dto_a_externo(query_resultado.resultado)
             
             consumer.acknowledge(mensaje)
             

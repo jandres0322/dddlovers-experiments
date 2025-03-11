@@ -61,6 +61,7 @@ class UnidadTrabajo(ABC):
         raise NotImplementedError                    
 
     def commit(self):
+        print('commit uow')
         self._publicar_eventos_post_commit()
         self._limpiar_batches()
 
