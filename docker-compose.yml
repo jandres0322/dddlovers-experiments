@@ -145,3 +145,22 @@ services:
       - PYTHONUNBUFFERED=1
     networks:
       - pulsar 
+
+  # Servicio BFF
+  bff:
+    build:
+      context: .
+      dockerfile: bff.Dockerfile  
+    container_name: bff
+    hostname: bff
+    profiles: ["saludtech", "bff"]
+    depends_on:
+      - saludtech
+      - broker
+    environment:
+      - SALUDTECH_ADDRESS=saludtech
+      - BROKER_HOST=broker
+    networks:
+      - pulsar
+    ports:
+      - "8003:8003"
