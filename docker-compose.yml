@@ -162,3 +162,21 @@ services:
         reservations:
           cpus: '0.25'
           memory: 256M
+
+  # Servicio BFF
+  bff:
+    build:
+      context: .
+      dockerfile: bff.Dockerfile  
+    container_name: bff
+    hostname: bff
+    depends_on:
+      - saludtech
+      - broker
+    environment:
+      - SALUDTECH_ADDRESS=saludtech
+      - BROKER_HOST=broker
+    networks:
+      - pulsar
+    ports:
+      - "8003:8003"
