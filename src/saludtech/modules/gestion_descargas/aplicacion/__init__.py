@@ -1,0 +1,7 @@
+from pydispatch import dispatcher
+
+from .handlers import HandlerSolicitudIntegracion
+
+from saludtech.modules.gestion_descargas.dominio.eventos import EventoSolicitudDescargaCreada
+
+dispatcher.connect(HandlerSolicitudIntegracion.handle_solicitud_descarga_creada, signal=f'{EventoSolicitudDescargaCreada.__name__}Integracion')

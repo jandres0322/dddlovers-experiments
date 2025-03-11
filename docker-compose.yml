@@ -1,16 +1,10 @@
-
 networks:
   pulsar:
-    driver: bridge
-  sidecar:
-    driver: bridge
-  app:
     driver: bridge
 services:
   # Servicio de Zookeeper para gestionar el estado de Pulsar
   zookeeper:
     image: apachepulsar/pulsar:latest
-    profiles: ["pulsar"]
     container_name: zookeeper
     restart: on-failure
     networks:
@@ -19,7 +13,8 @@ services:
       - ./data/zookeeper:/pulsar/data/zookeeper
     environment:
       - metadataStoreUrl=zk:zookeeper:2181
-    command: >
+      - PULSAR_MEM=-Xms256m -Xmx256m -XX:MaxDirectMemorySize=256m
+    command: |
       bash -c "bin/apply-config-from-env.py conf/zookeeper.conf && \
              bin/generate-zookeeper-config.sh conf/zookeeper.conf && \
              exec bin/pulsar zookeeper"
@@ -34,18 +29,18 @@ services:
     container_name: pulsar-init
     hostname: pulsar-init
     image: apachepulsar/pulsar:latest
-    profiles: ["pulsar"]
     networks:
       - pulsar
     command: bin/pulsar initialize-cluster-metadata --cluster cluster-a --zookeeper zookeeper:2181 --configuration-store zookeeper:2181 --web-service-url http://broker:8080 --broker-service-url pulsar://broker:6650
+    environment:
+      - PULSAR_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=512m
     depends_on:
       zookeeper:
         condition: service_healthy
 
-  # Start bookie - Servicio de Bookie para almacenamiento persistente
+  # Start bookie
   bookie:
     image: apachepulsar/pulsar:latest
-    profiles: ["pulsar"]
     container_name: bookie
     restart: on-failure
     networks:
@@ -54,22 +49,20 @@ services:
       - clusterName=cluster-a
       - zkServers=zookeeper:2181
       - metadataServiceUri=metadata-store:zk:zookeeper:2181
+      - advertisedAddress=bookie
+      - BOOKIE_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
     depends_on:
       zookeeper:
         condition: service_healthy
       pulsar-init:
         condition: service_completed_successfully
-        
-    # Map the local directory to the container to avoid bookie startup failure due to insufficient container disks.
     volumes:
       - ./data/bookkeeper:/pulsar/data/bookkeeper
-    command: bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf
-      && exec bin/pulsar bookie"
+    command: bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && exec bin/pulsar bookie"
 
   # Start broker
   broker:
     image: apachepulsar/pulsar:latest
-    profiles: ["pulsar"]
     container_name: broker
     hostname: broker
     restart: on-failure
@@ -83,7 +76,8 @@ services:
       - managedLedgerDefaultWriteQuorum=1
       - managedLedgerDefaultAckQuorum=1
       - advertisedAddress=broker
-      - advertisedListeners=external:pulsar://127.0.0.1:6650
+      - advertisedListeners=external:pulsar://broker:6650
+      - PULSAR_MEM=-Xms1024m -Xmx1024m -XX:MaxDirectMemorySize=1024m
     depends_on:
       zookeeper:
         condition: service_healthy
@@ -92,31 +86,36 @@ services:
     ports:
       - "6650:6650"
       - "8080:8080"
-    command: bash -c "bin/apply-config-from-env.py conf/broker.conf
-      &&  exec bin/pulsar broker"
+    command: bash -c "bin/apply-config-from-env.py conf/broker.conf && exec bin/pulsar broker"
 
   # Servicios de SaludTech
   saludtech:
+    container_name: saludtech
     build:
       context: .
       dockerfile: saludtech.Dockerfile
-    profiles: ["saludtech"]
     depends_on:
       db:
         condition: service_healthy
     environment:
       - PYTHONUNBUFFERED=1
-      - PULSAR_ADDRESS=broker   
-    networks:
-      - pulsar
-      - app
+      - PULSAR_ADDRESS=broker
     ports:
       - "5000:5000" 
+    networks:
+      - pulsar
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
 
 
   db:
     image: postgres:16
-    profiles: ["saludtech"]
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -129,7 +128,16 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - app
+      - pulsar
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
 
   # Servicios de Notificación
   notificacion:
@@ -138,13 +146,22 @@ services:
       dockerfile: notificacion.Dockerfile
     container_name: notificacion
     hostname: notificacion
-    profiles: ["pulsar", "notificacion"]
     depends_on:
       - broker
+      - saludtech
     environment:
       - PYTHONUNBUFFERED=1
+      - PULSAR_ADDRESS=broker
     networks:
-      - pulsar 
+      - pulsar
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M    
 
   # Servicio BFF
   bff:

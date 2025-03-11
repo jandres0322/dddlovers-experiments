@@ -8,8 +8,8 @@ from saludtech.modulos.standard.dominio.objetos_valor import EstadoDescarga, For
 
 Base = db.declarative_base()
 
-class SolicitudDescarga(db.Model):
-    __tablename__ = 'solicitudes_descarga'
+class SolicitudDescargaV1(db.Model):
+    __tablename__ = 'solicitudes_descarga_v1'
     
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     usuario_id = Column(String, nullable=False)
@@ -24,8 +24,8 @@ class ImagenMedica(db.Model):
     __tablename__ = 'imagenes_medicas'
     
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    solicitud_id = Column(String, ForeignKey('solicitudes_descarga.id'), nullable=False)
+    solicitud_id = Column(String, ForeignKey('solicitudes_descarga_v1.id'), nullable=False)
     formato = Column(Enum(FormatoArchivo), nullable=False)
     ubicacion = Column(String, nullable=False)
 
-    solicitud = relationship('SolicitudDescarga', back_populates='imagenes')
+    solicitud = relationship('SolicitudDescargaV1', back_populates='imagenes')

@@ -4,12 +4,23 @@ from flask_swagger import swagger
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-def registrar_handler():
-    import saludtech.modulos.standard.aplicacion
 
 def importar_modelos_alchemy():
-    import saludtech.modulos.imagenes.infraestructura.dto
-    import saludtech.modulos.standard.infraestructura.dto
+    import saludtech.modules.gestion_descargas.infraestructura.dto
+    import saludtech.modules.procesamiento_imagenes.infraestructura.dto
+    
+def registrar_handlers():
+    import saludtech.modules.gestion_descargas.aplicacion
+    
+def comenzar_consumidores(app):
+    import saludtech.modules.procesamiento_imagenes.infraestructura.consumidores as procesamiento_imagenes
+
+    def iniciar_consumidor():
+        with app.app_context():
+            procesamiento_imagenes.subscribirse_a_eventos()
+    
+    import threading
+    threading.Thread(target=iniciar_consumidor, args=(app,)).start()
 
 def create_app(configuracion={}):
     # Init la aplicacion de Flask
@@ -25,18 +36,16 @@ def create_app(configuracion={}):
     from saludtech.config.db import init_db
     init_db(app)
 
-    from saludtech.config.db import db
-
-    importar_modelos_alchemy()
-    registrar_handler()
+    
     with app.app_context():
         db.create_all()
+        comenzar_consumidores(app)
 
      # Importa Blueprints
-    from . import standard
+    from . import gestion_descargas
 
     # Registro de Blueprints
-    app.register_blueprint(standard.bp)
+    app.register_blueprint(gestion_descargas.bp)
 
     @app.route("/spec")
     def spec():
