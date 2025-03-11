@@ -161,7 +161,7 @@ services:
           memory: 512M
         reservations:
           cpus: '0.25'
-          memory: 256M    
+          memory: 256M
 
   # Servicio BFF
   bff:
@@ -170,7 +170,6 @@ services:
       dockerfile: bff.Dockerfile  
     container_name: bff
     hostname: bff
-    profiles: ["saludtech", "bff"]
     depends_on:
       - saludtech
       - broker
